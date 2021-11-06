@@ -45,6 +45,7 @@ public class BPMSounds : MonoBehaviour
 
     private float soundPerSecond;
     private float timeStamp;
+    private float timeStamp2;
     private int beats;
 
     //Acordes
@@ -131,6 +132,7 @@ public class BPMSounds : MonoBehaviour
         metrica.Clear();
         filler.Clear();
         GenerateFiller();
+        GenerateScale();
     }
 
     void GenerateFiller()
@@ -207,7 +209,8 @@ public class BPMSounds : MonoBehaviour
     {
         List<int> NotesForChords = new List<int>();
         String noteInputTxt = (noteInput.text);
-        List<String> escala = new List<String>();
+        List<String> escala = new List<String>();        
+        //noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
         scaleText = scaleText.GetComponent<Text>();
         int index = 0;
         if (notasHalfFull.Contains(noteInputTxt))
@@ -299,57 +302,224 @@ public class BPMSounds : MonoBehaviour
 
     void calcularAcordesTocados()
     {
+        //Jalar los acordes correspondientes para cada escala
+        //Tonica: 1,3,6
+        //Sub: 2,4
+        //Dominante: 5,7
+        notasAcordesPlay.Clear();
         String currentChord = "SubDominante";
         for (int i = 0; i < lengthChords.Count; i++)
         {   
+            //Si el acorde que se tiene previamente es tonica se da preferencia a subdominante
             if(currentChord == "Tonica") {
-                if (UnityEngine.Random.Range(0, 4) < 3)
-                {
-                    for (int j = 0; j<3; j++)
-                    {
-                        notasAcordesPlay.Add(j);
-                    }
-                }
-            }else if (currentChord == "SubDominante")
-            {
-                int rand = UnityEngine.Random.Range(0, 5);
+                int rand = UnityEngine.Random.Range(0, 4);
+                string nota = "";
                 //Tonica
-                if (rand < 2)
+                if (rand == 0)
                 {
                     //La primera Tonica
-                    if (UnityEngine.Random.Range(0, 2) == 1)
+                    int randomTonica = UnityEngine.Random.Range(0, 3);
+                    //1
+                    if (randomTonica == 1)
                     {
-                        for (int j = 0; j < 3; j++)
-                        {
-                            notasAcordesPlay.Add(j);
-                        }
+                        nota = notasAcordes[0];
                     }
-                    
+                    //3
+                    else if (randomTonica == 2)
+                    {
+                        nota = notasAcordes[6];
+                    }
+                    //6
                     else
                     {
-
+                        nota = notasAcordes[15];
                     }
-
-                    
-                } 
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "Tonica";
+                }
                 //Subdominante
-                else if (rand == 2)
+                else if (rand >= 1 && rand < 3)
                 {
-
+                    int randomSubDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomSubDominante == 1)
+                    {
+                        nota = notasAcordes[3];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[9];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "SubDominante";
                 }
                 //Dominante
                 else
                 {
-
+                    int randomDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomDominante == 1)
+                    {
+                        nota = notasAcordes[12];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[18];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "Dominante";
+                }
+            }
+            else if (currentChord == "SubDominante")
+            {
+                int rand = UnityEngine.Random.Range(0, 5);
+                string nota = "";
+                //Tonica
+                if (rand < 2)
+                {
+                    //La primera Tonica
+                    int randomTonica = UnityEngine.Random.Range(0, 3);
+                    //1
+                    if (randomTonica == 1)
+                    {
+                        nota = notasAcordes[0];
+                    }
+                    //3
+                    else if (randomTonica == 2)
+                    {
+                        nota = notasAcordes[6];
+                    }
+                    //6
+                    else
+                    {
+                        nota = notasAcordes[15];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "Tonica";
+                } 
+                //Subdominante
+                else if (rand == 2)
+                {
+                    int randomSubDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomSubDominante == 1)
+                    {
+                        nota = notasAcordes[3];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[9];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "SubDominante";
+                }
+                //Dominante
+                else
+                {
+                    int randomDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomDominante == 1)
+                    {
+                        nota = notasAcordes[12];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[18];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "Dominante";
                 }
             }else if (currentChord == "Dominante")
             {
-                if (UnityEngine.Random.Range(0, 4) < 3)
+                int rand = UnityEngine.Random.Range(0, 4);
+                string nota = "";
+                //Tonica
+                if (rand == 0)
                 {
+                    //La primera Tonica
+                    int randomTonica = UnityEngine.Random.Range(0, 3);
+                    //1
+                    if (randomTonica == 1)
+                    {
+                        nota = notasAcordes[0];
+                    }
+                    //3
+                    else if (randomTonica == 2)
+                    {
+                        nota = notasAcordes[6];
+                    }
+                    //6
+                    else
+                    {
+                        nota = notasAcordes[15];
+                    }
                     for (int j = 0; j < 3; j++)
                     {
-                        notasAcordesPlay.Add(j);
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
                     }
+                    currentChord = "Tonica";
+                }
+                //Subdominante
+                else if (rand >= 1 && rand < 3)
+                {
+                    int randomSubDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomSubDominante == 1)
+                    {
+                        nota = notasAcordes[3];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[9];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "SubDominante";
+                }
+                //Dominante
+                else
+                {
+                    int randomDominante = UnityEngine.Random.Range(0, 3);
+                    //2
+                    if (randomDominante == 1)
+                    {
+                        nota = notasAcordes[12];
+                    }
+                    //4
+                    else
+                    {
+                        nota = notasAcordes[18];
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                    }
+                    currentChord = "Dominante";
                 }
             }
         }
@@ -451,29 +621,48 @@ public class BPMSounds : MonoBehaviour
 
     void calcularAcordes(List<String> escala)
     {
+        Debug.Log(escala[0]);
+        Debug.Log(escala[1]);
+        Debug.Log(escala[2]);
+        Debug.Log(escala[3]);
+        Debug.Log(escala[4]);
+        Debug.Log(escala[5]);
+        Debug.Log(escala[6]);
         notasAcordes.Clear();
         String acordes = "";
-        bool highPitch1 = false;
-        bool highPitch2 = false;
+        //bool highPitch1 = false;
+        //bool highPitch2 = false;
         for (int i = 0; i < 7; i++)
-        {            
+        {
+            List<String> notasAcordesTemp = new List<String>();
             notasAcordes.Add(escala[i]);
-            if (i + 2 > escala.Count)
+            /*if (i + 2 > escala.Count)
             {
                 highPitch1 = true;
             }
             if (i + 4 > escala.Count)
             {
                 highPitch2 = true;
-            }
+            }*/
             notasAcordes.Add(escala[(i + 2) % escala.Count]);
             notasAcordes.Add(escala[(i + 4) % escala.Count]);
-            String calidadAcorde;
-            
-            calidadAcorde = calcularCalidad(notasAcordes);
-            acordes += ("Acorde: " + notasAcordes[0] + ": " + notasAcordes[0] + " " + notasAcordes[1] + " " + notasAcordes[2] + "\n - Calidad: " + calidadAcorde + "\n");
+
+
+
+            notasAcordesTemp.Add(notasAcordes[i*3]);
+            notasAcordesTemp.Add(notasAcordes[i*3+1]);
+            notasAcordesTemp.Add(notasAcordes[i*3+2]);
+
+            String calidadAcorde;            
+            calidadAcorde = calcularCalidad(notasAcordesTemp);
+            acordes += ("Acorde: " + notasAcordes[i*3] + ": " + notasAcordes[i*3] + " " + notasAcordes[i * 3 + 1] + " " + notasAcordes[i * 3 + 2] + "\n - Calidad: " + calidadAcorde + "\n");
         }
-        acordesText.text = acordes;
+
+        for (int k = 0; k<notasAcordes.Count; k++)
+        {
+            Debug.Log(notasAcordes[k]);
+        }
+            acordesText.text = acordes;
     }
 
     void PlayBeats()
@@ -489,6 +678,7 @@ public class BPMSounds : MonoBehaviour
             PlayBeats();
             soundPerSecond = (60.0f / (bpm * 4));
             timeStamp += Time.deltaTime;
+            timeStamp2 += Time.deltaTime;
             if (timeStamp >= soundPerSecond)
             {
                 if (beats == compassRythm * 4)
@@ -513,14 +703,25 @@ public class BPMSounds : MonoBehaviour
                 timeStamp = 0.0f;
                 beats += 1;
             }
-            if (timeStamp >= soundPerSecond*lengthChords[nowPlayingChord]) { 
+            if (timeStamp2 >= soundPerSecond*lengthChords[nowPlayingChord]) { 
                 if(nowPlayingChord == lengthChords.Count)
                 {
                     nowPlayingChord = 0;
                 }
+                Debug.Log(notasAcordesPlay[nowPlayingChord]);
+                Debug.Log(notasAcordesPlay[nowPlayingChord+1]);
+                Debug.Log(notasAcordesPlay[nowPlayingChord+2]);
+                Debug.Log("ACORDES");
+                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord]]);
+                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord+1]]);
+                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord+2]]);
+                Debug.Log("COUNTERS");
+                Debug.Log(lengthChords.Count);
+                Debug.Log(notasAcordesPlay.Count);
                 SonidosNotas[notasAcordesPlay[nowPlayingChord]].Play();
                 SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Play();
                 SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Play();
+                timeStamp2 = 0f;
                 nowPlayingChord += 1;
             }
         }
