@@ -44,6 +44,7 @@ public class BPMSounds : MonoBehaviour
     public AudioSource G4Sonido;
 
     private float soundPerSecond;
+    private float soundPerSecondPiano;
     private float timeStamp;
     private float timeStamp2;
     private int beats;
@@ -55,6 +56,7 @@ public class BPMSounds : MonoBehaviour
     public GameObject startButton;
 
     public bool playOn;
+    private bool playingChords;
 
     List<String> notasHalfFull = new List<String>();
     List<AudioSource> SonidosNotas = new List<AudioSource>();
@@ -128,6 +130,7 @@ public class BPMSounds : MonoBehaviour
         rythmText = rythmText.GetComponent<Text>();
         rythmText.text = ("" + compassRythm);
         beats = 0;
+        playingChords = false;
         rythmsBeat.Clear();
         metrica.Clear();
         filler.Clear();
@@ -138,10 +141,10 @@ public class BPMSounds : MonoBehaviour
     void GenerateFiller()
     {
         //Elige entre que sean negras, corcheas o semicorcheas
-        int option = UnityEngine.Random.RandomRange(0, 3);
+        int option = UnityEngine.Random.Range(0, 3);
         //negras
         //[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] 4/4
-        int optionAgrupacion = UnityEngine.Random.RandomRange(3, 5);
+        int optionAgrupacion = UnityEngine.Random.Range(3, 5);
         //3 o 4 
         if (option == 0)
         {
@@ -190,7 +193,7 @@ public class BPMSounds : MonoBehaviour
         {
             if (rythmsBeat[i] == 0)
             {
-                if(UnityEngine.Random.RandomRange(0, 2) == 1)
+                if(UnityEngine.Random.Range(0, 2) == 1)
                 {
                     filler.Add(1);
                 } else
@@ -210,7 +213,7 @@ public class BPMSounds : MonoBehaviour
         List<int> NotesForChords = new List<int>();
         String noteInputTxt = (noteInput.text);
         List<String> escala = new List<String>();        
-        //noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
+        noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
         scaleText = scaleText.GetComponent<Text>();
         int index = 0;
         if (notasHalfFull.Contains(noteInputTxt))
@@ -309,11 +312,13 @@ public class BPMSounds : MonoBehaviour
         notasAcordesPlay.Clear();
         String currentChord = "SubDominante";
         for (int i = 0; i < lengthChords.Count; i++)
-        {   
+        {
+            String nota = "";
+            String nota2 = "";
+            String nota3 = "";
             //Si el acorde que se tiene previamente es tonica se da preferencia a subdominante
-            if(currentChord == "Tonica") {
-                int rand = UnityEngine.Random.Range(0, 4);
-                string nota = "";
+            if (currentChord == "Tonica") {
+                int rand = UnityEngine.Random.Range(0, 4);                
                 //Tonica
                 if (rand == 0)
                 {
@@ -323,20 +328,22 @@ public class BPMSounds : MonoBehaviour
                     if (randomTonica == 1)
                     {
                         nota = notasAcordes[0];
+                        nota2 = notasAcordes[1];
+                        nota3 = notasAcordes[2];
                     }
                     //3
                     else if (randomTonica == 2)
                     {
                         nota = notasAcordes[6];
+                        nota2 = notasAcordes[7];
+                        nota3 = notasAcordes[8];
                     }
                     //6
                     else
                     {
                         nota = notasAcordes[15];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                        nota2 = notasAcordes[16];
+                        nota3 = notasAcordes[17];
                     }
                     currentChord = "Tonica";
                 }
@@ -348,43 +355,31 @@ public class BPMSounds : MonoBehaviour
                     if (randomSubDominante == 1)
                     {
                         nota = notasAcordes[3];
+                        nota2 = notasAcordes[4];
+                        nota3 = notasAcordes[5];
                     }
                     //4
                     else
                     {
                         nota = notasAcordes[9];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                        nota2 = notasAcordes[10];
+                        nota3 = notasAcordes[11];
                     }
                     currentChord = "SubDominante";
                 }
                 //Dominante
                 else
                 {
-                    int randomDominante = UnityEngine.Random.Range(0, 3);
-                    //2
-                    if (randomDominante == 1)
-                    {
-                        nota = notasAcordes[12];
-                    }
-                    //4
-                    else
-                    {
-                        nota = notasAcordes[18];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
-                    }
+                    //5
+                    nota = notasAcordes[12];
+                    nota2 = notasAcordes[13];
+                    nota3 = notasAcordes[14];
                     currentChord = "Dominante";
                 }
             }
             else if (currentChord == "SubDominante")
             {
                 int rand = UnityEngine.Random.Range(0, 5);
-                string nota = "";
                 //Tonica
                 if (rand < 2)
                 {
@@ -394,20 +389,22 @@ public class BPMSounds : MonoBehaviour
                     if (randomTonica == 1)
                     {
                         nota = notasAcordes[0];
+                        nota2 = notasAcordes[1];
+                        nota3 = notasAcordes[2];
                     }
                     //3
                     else if (randomTonica == 2)
                     {
                         nota = notasAcordes[6];
+                        nota2 = notasAcordes[7];
+                        nota3 = notasAcordes[8];
                     }
                     //6
                     else
                     {
                         nota = notasAcordes[15];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                        nota2 = notasAcordes[16];
+                        nota3 = notasAcordes[17];
                     }
                     currentChord = "Tonica";
                 } 
@@ -419,42 +416,31 @@ public class BPMSounds : MonoBehaviour
                     if (randomSubDominante == 1)
                     {
                         nota = notasAcordes[3];
+                        nota2 = notasAcordes[4];
+                        nota3 = notasAcordes[5];
                     }
                     //4
                     else
                     {
                         nota = notasAcordes[9];
+                        nota2 = notasAcordes[10];
+                        nota3 = notasAcordes[11];
                     }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
-                    }
+
                     currentChord = "SubDominante";
                 }
                 //Dominante
                 else
                 {
-                    int randomDominante = UnityEngine.Random.Range(0, 3);
-                    //2
-                    if (randomDominante == 1)
-                    {
-                        nota = notasAcordes[12];
-                    }
-                    //4
-                    else
-                    {
-                        nota = notasAcordes[18];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
-                    }
+                    //5
+                    nota = notasAcordes[12];
+                    nota2 = notasAcordes[13];
+                    nota3 = notasAcordes[14];
                     currentChord = "Dominante";
                 }
             }else if (currentChord == "Dominante")
             {
                 int rand = UnityEngine.Random.Range(0, 4);
-                string nota = "";
                 //Tonica
                 if (rand == 0)
                 {
@@ -464,20 +450,22 @@ public class BPMSounds : MonoBehaviour
                     if (randomTonica == 1)
                     {
                         nota = notasAcordes[0];
+                        nota2 = notasAcordes[1];
+                        nota3 = notasAcordes[2];
                     }
                     //3
                     else if (randomTonica == 2)
                     {
                         nota = notasAcordes[6];
+                        nota2 = notasAcordes[7];
+                        nota3 = notasAcordes[8];
                     }
                     //6
                     else
                     {
                         nota = notasAcordes[15];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                        nota2 = notasAcordes[16];
+                        nota3 = notasAcordes[17];
                     }
                     currentChord = "Tonica";
                 }
@@ -489,39 +477,31 @@ public class BPMSounds : MonoBehaviour
                     if (randomSubDominante == 1)
                     {
                         nota = notasAcordes[3];
+                        nota2 = notasAcordes[4];
+                        nota3 = notasAcordes[5];
                     }
                     //4
                     else
                     {
                         nota = notasAcordes[9];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
+                        nota2 = notasAcordes[10];
+                        nota3 = notasAcordes[11];
                     }
                     currentChord = "SubDominante";
                 }
                 //Dominante
                 else
                 {
-                    int randomDominante = UnityEngine.Random.Range(0, 3);
-                    //2
-                    if (randomDominante == 1)
-                    {
-                        nota = notasAcordes[12];
-                    }
-                    //4
-                    else
-                    {
-                        nota = notasAcordes[18];
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        notasAcordesPlay.Add(notasAcordes.IndexOf(nota) + j);
-                    }
+                    //5
+                    nota = notasAcordes[12];
+                    nota2 = notasAcordes[13];
+                    nota3 = notasAcordes[14];
                     currentChord = "Dominante";
                 }
             }
+            notasAcordesPlay.Add(notasHalfFull.IndexOf(nota));
+            notasAcordesPlay.Add(notasHalfFull.IndexOf(nota2));
+            notasAcordesPlay.Add(notasHalfFull.IndexOf(nota3));
         }
     }
 
@@ -556,7 +536,7 @@ public class BPMSounds : MonoBehaviour
                 else
                 {
                     //50% de probabilidad que se quede durando 1 compas
-                    if (UnityEngine.Random.RandomRange(0, 2) == 1)
+                    if (UnityEngine.Random.Range(0, 2) == 1)
                     {
                         if (compasesRestantes - 1 >= 0)
                         {
@@ -621,13 +601,6 @@ public class BPMSounds : MonoBehaviour
 
     void calcularAcordes(List<String> escala)
     {
-        Debug.Log(escala[0]);
-        Debug.Log(escala[1]);
-        Debug.Log(escala[2]);
-        Debug.Log(escala[3]);
-        Debug.Log(escala[4]);
-        Debug.Log(escala[5]);
-        Debug.Log(escala[6]);
         notasAcordes.Clear();
         String acordes = "";
         //bool highPitch1 = false;
@@ -658,11 +631,7 @@ public class BPMSounds : MonoBehaviour
             acordes += ("Acorde: " + notasAcordes[i*3] + ": " + notasAcordes[i*3] + " " + notasAcordes[i * 3 + 1] + " " + notasAcordes[i * 3 + 2] + "\n - Calidad: " + calidadAcorde + "\n");
         }
 
-        for (int k = 0; k<notasAcordes.Count; k++)
-        {
-            Debug.Log(notasAcordes[k]);
-        }
-            acordesText.text = acordes;
+        acordesText.text = acordes;
     }
 
     void PlayBeats()
@@ -677,6 +646,7 @@ public class BPMSounds : MonoBehaviour
         if (playOn) {
             PlayBeats();
             soundPerSecond = (60.0f / (bpm * 4));
+            soundPerSecondPiano = (60.0f / bpm);
             timeStamp += Time.deltaTime;
             timeStamp2 += Time.deltaTime;
             if (timeStamp >= soundPerSecond)
@@ -703,27 +673,28 @@ public class BPMSounds : MonoBehaviour
                 timeStamp = 0.0f;
                 beats += 1;
             }
-            if (timeStamp2 >= soundPerSecond*lengthChords[nowPlayingChord]) { 
-                if(nowPlayingChord == lengthChords.Count)
+            if (timeStamp2 <= (soundPerSecondPiano*lengthChords[nowPlayingChord])) {
+                if(nowPlayingChord == lengthChords.Count-1)
                 {
                     nowPlayingChord = 0;
                 }
-                Debug.Log(notasAcordesPlay[nowPlayingChord]);
-                Debug.Log(notasAcordesPlay[nowPlayingChord+1]);
-                Debug.Log(notasAcordesPlay[nowPlayingChord+2]);
-                Debug.Log("ACORDES");
-                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord]]);
-                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord+1]]);
-                Debug.Log(notasAcordes[notasAcordesPlay[nowPlayingChord+2]]);
-                Debug.Log("COUNTERS");
-                Debug.Log(lengthChords.Count);
-                Debug.Log(notasAcordesPlay.Count);
-                SonidosNotas[notasAcordesPlay[nowPlayingChord]].Play();
-                SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Play();
-                SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Play();
+                if (playingChords == false)
+                {
+                    playingChords = true;
+                    SonidosNotas[notasAcordesPlay[nowPlayingChord]].Play();
+                    SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Play();
+                    SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Play();                    
+                }
+            } else if(timeStamp2 > (soundPerSecondPiano * lengthChords[nowPlayingChord]))
+            {
+                SonidosNotas[notasAcordesPlay[nowPlayingChord]].Stop();
+                SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Stop();
+                SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Stop();
+                playingChords = false;
                 timeStamp2 = 0f;
                 nowPlayingChord += 1;
             }
+            
         }
         else
         {
@@ -743,6 +714,7 @@ public class BPMSounds : MonoBehaviour
             //startButton.SetActive(true);
             //stopButton.SetActive(false);
             playOn = false;
+            playingChords = false;
         }
     }
 
