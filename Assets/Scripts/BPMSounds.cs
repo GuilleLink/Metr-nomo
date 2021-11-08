@@ -10,7 +10,6 @@ public class BPMSounds : MonoBehaviour
     private int Seed;
 
     public Button generateSeedButton;
-    public Button generateScale;
 
     public Text rythmText;
     public Text seedText;
@@ -22,7 +21,6 @@ public class BPMSounds : MonoBehaviour
     public int compassRythm;
 
     public InputField bpmInput;
-    public InputField noteInput;
     public InputField seedInput;
 
     public AudioSource metricaSonido;
@@ -42,6 +40,18 @@ public class BPMSounds : MonoBehaviour
     public AudioSource F4Sonido;
     public AudioSource Gb4Sonido;
     public AudioSource G4Sonido;
+    public AudioSource Ab5Sonido;
+    public AudioSource A5Sonido;
+    public AudioSource Bb5Sonido;
+    public AudioSource B5Sonido;
+    public AudioSource C5Sonido;
+    public AudioSource Db5Sonido;
+    public AudioSource D5Sonido;
+    public AudioSource Eb5Sonido;
+    public AudioSource E5Sonido;
+    public AudioSource F5Sonido;
+    public AudioSource Gb5Sonido;
+    public AudioSource G5Sonido;
 
     private float soundPerSecond;
     private float soundPerSecondPiano;
@@ -78,8 +88,6 @@ public class BPMSounds : MonoBehaviour
     {
         Button seedbtn = generateSeedButton.GetComponent<Button>();
         seedbtn.onClick.AddListener(GenerateSeed);
-        Button scalebtn = generateScale.GetComponent<Button>();
-        scalebtn.onClick.AddListener(GenerateScale);
         beats = 0;
         nowPlayingChord = 0;
         bpm = 60;
@@ -117,6 +125,30 @@ public class BPMSounds : MonoBehaviour
         SonidosNotas.Add(Gb4Sonido);
         notasHalfFull.Add("G");
         SonidosNotas.Add(G4Sonido);
+        notasHalfFull.Add("Ab1");
+        SonidosNotas.Add(Ab5Sonido);
+        notasHalfFull.Add("A1");
+        SonidosNotas.Add(A5Sonido);
+        notasHalfFull.Add("Bb1");
+        SonidosNotas.Add(Bb5Sonido);
+        notasHalfFull.Add("B1");
+        SonidosNotas.Add(B5Sonido);
+        notasHalfFull.Add("C1");
+        SonidosNotas.Add(C5Sonido);
+        notasHalfFull.Add("Db1");
+        SonidosNotas.Add(Db5Sonido);
+        notasHalfFull.Add("D1");
+        SonidosNotas.Add(D5Sonido);
+        notasHalfFull.Add("Eb1");
+        SonidosNotas.Add(Eb5Sonido);
+        notasHalfFull.Add("E1");
+        SonidosNotas.Add(E5Sonido);
+        notasHalfFull.Add("F1");
+        SonidosNotas.Add(F5Sonido);
+        notasHalfFull.Add("Gb1");
+        SonidosNotas.Add(Gb5Sonido);
+        notasHalfFull.Add("G1");
+        SonidosNotas.Add(G5Sonido);
     }
 
     public void GenerateSeed()
@@ -211,9 +243,8 @@ public class BPMSounds : MonoBehaviour
     void GenerateScale()
     {
         List<int> NotesForChords = new List<int>();
-        String noteInputTxt = (noteInput.text);
         List<String> escala = new List<String>();        
-        noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
+        string noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
         scaleText = scaleText.GetComponent<Text>();
         int index = 0;
         if (notasHalfFull.Contains(noteInputTxt))
@@ -261,47 +292,6 @@ public class BPMSounds : MonoBehaviour
         calcularAcordesTocados();
         scaleText.text = ("" + scaleNotes);
     }
-
-    void GenerateProgression(List<String> escala)
-    {
-        
-    }
-
-    //1. Dividir los 8 compases en según si sonará 4 compases, 2 compases, 1 compas o medio compas (minima subdivision)
-    //
-    //   8 Compases 8
-    //                                  8               8                   8
-    //   Sub dividir (random) Ej. 1: 4,2,2  Ej. 2: 2,1,1,2,2   Ej. 3: 1/2, 2, 1/2, 2, 1, 2
-    //                    [1      ,2  ,3  ]        
-    //                    [1,1,1,1,2,2,3,3]  [1,1,2,3,4,4,5,5]
-    //   Para subdividir "Reglas" 4 probabilidad = 25%  (NO se subdivide)      Random(1,4)
-    //                            2 probabilidad = 33%  (Se subdivide 1 vez)   Random(1,3)
-    //                            1 probabilidad = 50%  (Se subdivide 2 veces) Random(1,2)
-    //                            1/2 probabilidad = 100% (Se subdivide 3 veces)
-    //
-    //2. Asignar el array segun cuantos compases se estara ocupando por acorde
-    //   
-    //   [4,2,2]
-    //   [1,1,1,1,2,2,3,3]
-    //
-    //3. Random entre el tipo de acorde que saldra (con favoritismos 2/3)
-    //   
-    //   Tonica, Sub y Dom
-    //   2/5     1/5    2/5   Random(1,5)  1,2 Tonica, 3 Sub, 4,5 Dom
-    //  
-    //   1/4     2/4   1/4   
-    //
-    //   Current ChordType = 1   if(currentChordType ==1 || currentChordType ==3) {Random(1,4)} else{Random(1,5)}
-    //   Duracion de Acorde
-    //   [2,1,1,2,2]
-    //   Tipos de Acorde
-    //   [1,2,1,2,3]
-    //   
-    //
-    //4. Random entre CUAL acorde se usara de ese tipo
-    //    
-    //   [6,4,1,4,5]
-    //
 
     void calcularAcordesTocados()
     {
@@ -603,22 +593,28 @@ public class BPMSounds : MonoBehaviour
     {
         notasAcordes.Clear();
         String acordes = "";
-        //bool highPitch1 = false;
-        //bool highPitch2 = false;
         for (int i = 0; i < 7; i++)
         {
             List<String> notasAcordesTemp = new List<String>();
             notasAcordes.Add(escala[i]);
-            /*if (i + 2 > escala.Count)
+            if (i + 2 > escala.Count)
             {
-                highPitch1 = true;
+                notasAcordes.Add(escala[(i + 2) % escala.Count] + "1");
+            }
+            else
+            {
+                notasAcordes.Add(escala[(i + 2) % escala.Count]);
             }
             if (i + 4 > escala.Count)
             {
-                highPitch2 = true;
-            }*/
-            notasAcordes.Add(escala[(i + 2) % escala.Count]);
-            notasAcordes.Add(escala[(i + 4) % escala.Count]);
+                notasAcordes.Add(escala[(i + 4) % escala.Count] + "1");
+            }
+            else
+            {
+                notasAcordes.Add(escala[(i + 4) % escala.Count]);
+            }
+            
+            
 
 
 
@@ -632,6 +628,12 @@ public class BPMSounds : MonoBehaviour
         }
 
         acordesText.text = acordes;
+    }
+
+    void GenerateStructure()
+    {
+        GenerateFiller();
+        GenerateScale();
     }
 
     void PlayBeats()
@@ -649,6 +651,7 @@ public class BPMSounds : MonoBehaviour
             soundPerSecondPiano = (60.0f / bpm);
             timeStamp += Time.deltaTime;
             timeStamp2 += Time.deltaTime;
+            //Musica Bateria
             if (timeStamp >= soundPerSecond)
             {
                 if (beats == compassRythm * 4)
@@ -667,12 +670,10 @@ public class BPMSounds : MonoBehaviour
                 {
                     ritmoSonido.Play();
                 }
-
-                //Sonidos acordes
-
                 timeStamp = 0.0f;
                 beats += 1;
             }
+            //Musica Acordes
             if (timeStamp2 <= (soundPerSecondPiano*lengthChords[nowPlayingChord])) {
                 if(nowPlayingChord == lengthChords.Count-1)
                 {
