@@ -67,6 +67,7 @@ public class BPMSounds : MonoBehaviour
 
     public bool playOn;
     private bool playingChords;
+    private bool iteracionFinal;
 
     List<String> notasHalfFull = new List<String>();
     List<AudioSource> SonidosNotas = new List<AudioSource>();
@@ -163,11 +164,13 @@ public class BPMSounds : MonoBehaviour
         rythmText.text = ("" + compassRythm);
         beats = 0;
         playingChords = false;
+        iteracionFinal = false;
         rythmsBeat.Clear();
         metrica.Clear();
         filler.Clear();
-        GenerateFiller();
-        GenerateScale();
+        notasAcordesPlay.Clear();
+        lengthChords.Clear();
+        GenerateStructure();
     }
 
     void GenerateFiller()
@@ -176,8 +179,8 @@ public class BPMSounds : MonoBehaviour
         int option = UnityEngine.Random.Range(0, 3);
         //negras
         //[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] 4/4
-        int optionAgrupacion = UnityEngine.Random.Range(3, 5);
-        //3 o 4 
+        //int optionAgrupacion = UnityEngine.Random.Range(3, 5);
+        //3 o 4
         if (option == 0)
         {
             for(int i = 0; i < compassRythm; i++)
@@ -220,21 +223,25 @@ public class BPMSounds : MonoBehaviour
             }
         }
 
-
-        for (int i =0; i< rythmsBeat.Count; i++)
+        if (iteracionFinal == true)
         {
-            if (rythmsBeat[i] == 0)
+            for (int i = 0; i < rythmsBeat.Count; i++)
             {
-                if(UnityEngine.Random.Range(0, 2) == 1)
+                if (rythmsBeat[i] == 0)
                 {
-                    filler.Add(1);
-                } else
+                    if (UnityEngine.Random.Range(0, 2) == 1)
+                    {
+                        filler.Add(1);
+                    }
+                    else
+                    {
+                        filler.Add(0);
+                    }
+                }
+                else if (rythmsBeat[i] == 1)
                 {
                     filler.Add(0);
                 }
-            } else if (rythmsBeat[i] == 1)
-            {
-                filler.Add(0);
             }
         }
     }
@@ -299,7 +306,6 @@ public class BPMSounds : MonoBehaviour
         //Tonica: 1,3,6
         //Sub: 2,4
         //Dominante: 5,7
-        notasAcordesPlay.Clear();
         String currentChord = "SubDominante";
         for (int i = 0; i < lengthChords.Count; i++)
         {
@@ -497,7 +503,6 @@ public class BPMSounds : MonoBehaviour
 
     void calcularDuracionAcordes()
     {
-        lengthChords.Clear();
         float compasesRestantes = 8f;
         //El siguiente acorde va a durar 4 compases
         //25% de probabilidad de que dure 4 compases
@@ -615,16 +620,13 @@ public class BPMSounds : MonoBehaviour
             }
             
             
-
-
-
             notasAcordesTemp.Add(notasAcordes[i*3]);
-            notasAcordesTemp.Add(notasAcordes[i*3+1]);
-            notasAcordesTemp.Add(notasAcordes[i*3+2]);
+            notasAcordesTemp.Add(notasAcordes[(i*3)+1]);
+            notasAcordesTemp.Add(notasAcordes[(i*3)+2]);
 
             String calidadAcorde;            
             calidadAcorde = calcularCalidad(notasAcordesTemp);
-            acordes += ("Acorde: " + notasAcordes[i*3] + ": " + notasAcordes[i*3] + " " + notasAcordes[i * 3 + 1] + " " + notasAcordes[i * 3 + 2] + "\n - Calidad: " + calidadAcorde + "\n");
+            acordes += ("Acorde: " + notasAcordes[i*3] + ": " + notasAcordes[i*3] + " " + notasAcordes[(i * 3) + 1] + " " + notasAcordes[(i * 3) + 2] + "\n - Calidad: " + calidadAcorde + "\n");
         }
 
         acordesText.text = acordes;
@@ -632,8 +634,19 @@ public class BPMSounds : MonoBehaviour
 
     void GenerateStructure()
     {
-        GenerateFiller();
-        GenerateScale();
+        for (int i =0; i<4; i++)
+        {
+            if (i == 3)
+            {
+                iteracionFinal = true;
+            }
+            else
+            {
+                iteracionFinal = false;
+            }
+            GenerateFiller();
+            GenerateScale();
+        }
     }
 
     void PlayBeats()
@@ -654,7 +667,7 @@ public class BPMSounds : MonoBehaviour
             //Musica Bateria
             if (timeStamp >= soundPerSecond)
             {
-                if (beats == compassRythm * 4)
+                if (beats == filler.Count)
                 {
                     beats = 0;
                 }
@@ -682,15 +695,18 @@ public class BPMSounds : MonoBehaviour
                 if (playingChords == false)
                 {
                     playingChords = true;
-                    SonidosNotas[notasAcordesPlay[nowPlayingChord]].Play();
-                    SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Play();
-                    SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Play();                    
+                    //Debug.Log(notasAcordesPlay[nowPlayingChord*3]);
+                    //Debug.Log(notasAcordesPlay[nowPlayingChord*3+1]);
+                    //Debug.Log(notasAcordesPlay[nowPlayingChord*3+2]);
+                    //SonidosNotas[notasAcordesPlay[nowPlayingChord*3] % SonidosNotas.Count].Play();
+                    //SonidosNotas[notasAcordesPlay[(nowPlayingChord*3) + 1] % SonidosNotas.Count].Play();
+                    //SonidosNotas[notasAcordesPlay[(nowPlayingChord*3) + 2] % SonidosNotas.Count].Play();
                 }
             } else if(timeStamp2 > (soundPerSecondPiano * lengthChords[nowPlayingChord]))
             {
-                SonidosNotas[notasAcordesPlay[nowPlayingChord]].Stop();
-                SonidosNotas[notasAcordesPlay[nowPlayingChord + 1]].Stop();
-                SonidosNotas[notasAcordesPlay[nowPlayingChord + 2]].Stop();
+                //SonidosNotas[notasAcordesPlay[nowPlayingChord] % SonidosNotas.Count].Stop();
+                //SonidosNotas[notasAcordesPlay[(nowPlayingChord * 3) + 1] % SonidosNotas.Count].Stop();
+                //SonidosNotas[notasAcordesPlay[(nowPlayingChord * 3) + 2] % SonidosNotas.Count].Stop();
                 playingChords = false;
                 timeStamp2 = 0f;
                 nowPlayingChord += 1;
