@@ -16,6 +16,8 @@ public class BPMSounds : MonoBehaviour
     public Text scaleText;
     public Text acordesText;
     public Text nowPlayingChordText;
+    public Text nowPlayingFillerText;
+    public Text nowPlayingMetricaText;
 
     public int bpm;
     public float soundsPerSecond;
@@ -103,6 +105,7 @@ public class BPMSounds : MonoBehaviour
         seedbtn.onClick.AddListener(GenerateSeed);
         beats = 0;
         nowPlayingChord = 0;
+        nowPlayingStructure = 0;
         bpm = 60;
         compassRythm = 4;
         playOn = false;
@@ -645,7 +648,7 @@ public class BPMSounds : MonoBehaviour
             notasAcordesTemp.Add(notasAcordes[(i*3)+1]);
             notasAcordesTemp.Add(notasAcordes[(i*3)+2]);
 
-            String calidadAcorde;            
+            String calidadAcorde;
             calidadAcorde = calcularCalidad(notasAcordesTemp);
             acordes += ("Acorde: " + notasAcordes[i*3] + ": " + notasAcordes[i*3] + " " + notasAcordes[(i * 3) + 1] + " " + notasAcordes[(i * 3) + 2] + "\n - Calidad: " + calidadAcorde + "\n");
         }
@@ -655,9 +658,27 @@ public class BPMSounds : MonoBehaviour
 
     void GenerateStructure()
     {
+        estructuraActual = 0;
+        //Se limpian los diccionarios
+        EstructuraAcordes.Clear();
+        EstructuraLengthAcordes.Clear();
+        EstructuraLengthMelodia.Clear();
+        EstructuraMelodia.Clear();
+        EstructuraFiller.Clear();
+        EstructuraMetrica.Clear();
+        EstructuraRitmica.Clear();
+        //Se limpia la estructura
+        estructuras.Clear();
         //Se genera la primera estructura en general #Estructura 0
         GenerateFiller();
         GenerateScale();
+        string fillerText = "";
+        for (int i=0; i<EstructuraFiller[0].Count;i++)
+        {
+            fillerText += EstructuraFiller[0][i];
+        }
+        nowPlayingFillerText.text = (""+fillerText);
+        estructuras.Add(0);
         //Se crean las siguientes 3 estructuras
         for (int i =0; i<3; i++)
         {
@@ -668,6 +689,7 @@ public class BPMSounds : MonoBehaviour
                 estructuraActual += 1;
                 GenerateFiller();
                 GenerateScale();
+                estructuras.Add(estructuraActual);
             }
             //Se usa una estructura ya existente
             else
@@ -675,6 +697,11 @@ public class BPMSounds : MonoBehaviour
                 int estructuraARepetir = UnityEngine.Random.Range(0,estructuras.Count);
                 estructuras.Add(estructuraARepetir);
             }            
+        }        
+        Debug.Log("SIZE STRUCTURES: "+estructuras.Count);
+        for (int i=0; i<estructuras.Count; i++)
+        {
+            Debug.Log(estructuras[i]);
         }
     }
 
@@ -696,19 +723,36 @@ public class BPMSounds : MonoBehaviour
             //Musica Bateria
             if (timeStamp >= soundPerSecond)
             {
-                if (beats == filler.Count)
+                if (beats == EstructuraFiller[estructuras[nowPlayingStructure]].Count)
                 {
                     beats = 0;
+                    nowPlayingStructure += 1;
+                    string fillerText = "";
+                    string metricaText = "";
+                    if (nowPlayingStructure == estructuras.Count)
+                    {
+                        nowPlayingStructure = 0;
+                    }
+                    for (int i = 0; i < EstructuraFiller[estructuras[nowPlayingStructure]].Count; i++)
+                    {
+                        fillerText += EstructuraFiller[estructuras[nowPlayingStructure]][i];
+                        metricaText += EstructuraMetrica[estructuras[nowPlayingStructure]][i];
+                    }
+                    Debug.Log("NOW PLAYING STRUCTURE: " + nowPlayingStructure);
+                    Debug.Log("Structure: " + estructuras[nowPlayingStructure]);
+                    nowPlayingFillerText.text = ("" + fillerText);
+                    nowPlayingMetricaText.text = ("" + metricaText);
                 }
-                if (filler[beats] == 1)
+
+                if (EstructuraFiller[estructuras[nowPlayingStructure]][beats] == 1)
                 {
                     fillerSonido.Play();
                 }
-                if (metrica[beats] == 1)
+                if (EstructuraMetrica[estructuras[nowPlayingStructure]][beats] == 1)
                 {
                     metricaSonido.Play();
                 }
-                if (rythmsBeat[beats] == 1)
+                if (EstructuraRitmica[estructuras[nowPlayingStructure]][beats] == 1)
                 {
                     ritmoSonido.Play();
                 }
@@ -724,8 +768,8 @@ public class BPMSounds : MonoBehaviour
                 if (playingChords == false)
                 {
                     playingChords = true;
-                    Debug.Log(notasAcordesPlay.Count);
-                    Debug.Log(nowPlayingChord);
+                    //Debug.Log(notasAcordesPlay.Count);
+                    //Debug.Log(nowPlayingChord);
                     //nowPlayingChordText.text = (""+notasAcordesPlay[nowPlayingChord*3]);
                     //Debug.Log(notasAcordesPlay[nowPlayingChord*3]);
                     //Debug.Log(notasAcordesPlay[nowPlayingChord*3+1]);
@@ -751,6 +795,7 @@ public class BPMSounds : MonoBehaviour
             nowPlayingChordText.text = ("");
             beats = 0;
             nowPlayingChord = 0;
+            nowPlayingStructure = 0;
         }
         //Revision On
         //Si hago click en play
