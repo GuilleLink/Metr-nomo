@@ -185,9 +185,9 @@ public class BPMSounds : MonoBehaviour
 
     void GenerateFiller()
     {
-        rythmsBeat.Clear();
-        metrica.Clear();
-        filler.Clear();
+        rythmsBeat = new List<int>();
+        metrica = new List<int>();
+        filler = new List<int>();
         //Elige entre que sean negras, corcheas o semicorcheas
         int option = UnityEngine.Random.Range(0, 3);
         //negras
@@ -265,7 +265,7 @@ public class BPMSounds : MonoBehaviour
     void GenerateScale()
     {
         //Limpieza de listas
-        notasAcordesPlay.Clear();
+        notasAcordesPlay = new List<int>();
         List<string> escala = new List<string>();        
         string noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
         scaleText = scaleText.GetComponent<Text>();
@@ -522,7 +522,7 @@ public class BPMSounds : MonoBehaviour
 
     void calcularDuracionAcordes()
     {
-        lengthChords.Clear();
+        lengthChords = new List<float>();
         float compasesRestantes = 8f;
         //El siguiente acorde va a durar 4 compases
         //25% de probabilidad de que dure 4 compases
@@ -618,7 +618,7 @@ public class BPMSounds : MonoBehaviour
 
     void calcularAcordes(List<String> escala)
     {
-        notasAcordes.Clear();
+        notasAcordes = new List<String>();
         String acordes = "";
         for (int i = 0; i < 7; i++)
         {
@@ -728,14 +728,10 @@ public class BPMSounds : MonoBehaviour
             {
                 if (beats == EstructuraFiller[estructuras[nowPlayingStructure]].Count)
                 {
-                    beats = 0;
-                    nowPlayingStructure += 1;
+                    beats = 0;                    
                     string fillerText = "";
                     string metricaText = "";
-                    if (nowPlayingStructure == estructuras.Count)
-                    {
-                        nowPlayingStructure = 0;
-                    }
+
                     for (int i = 0; i < EstructuraFiller[estructuras[nowPlayingStructure]].Count; i++)
                     {
                         fillerText += EstructuraFiller[estructuras[nowPlayingStructure]][i];
@@ -765,6 +761,11 @@ public class BPMSounds : MonoBehaviour
                 if(nowPlayingChord == EstructuraLengthAcordes[estructuras[nowPlayingStructure]].Count-1)
                 {
                     nowPlayingChord = 0;
+                    nowPlayingStructure += 1;
+                    if (nowPlayingStructure == estructuras.Count)
+                    {
+                        nowPlayingStructure = 0;
+                    }
                 }
                 if (playingChords == false)
                 {
