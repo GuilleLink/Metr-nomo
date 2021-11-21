@@ -815,15 +815,15 @@ public class BPMSounds : MonoBehaviour
                     nowPlayingMetricaText.text = ("" + metricaText);
                 }
 
-                if (EstructuraFiller[estructuras[nowPlayingStructure]][beats] == 1)
+                if (EstructuraFiller[estructuras[nowPlayingStructure]][beats % EstructuraFiller[estructuras[nowPlayingStructure]].Count] == 1)
                 {
                     fillerSonido.Play();
                 }
-                if (EstructuraMetrica[estructuras[nowPlayingStructure]][beats] == 1)
+                if (EstructuraMetrica[estructuras[nowPlayingStructure]][beats % EstructuraMetrica[estructuras[nowPlayingStructure]].Count] == 1)
                 {
                     metricaSonido.Play();
                 }
-                if (EstructuraRitmica[estructuras[nowPlayingStructure]][beats] == 1)
+                if (EstructuraRitmica[estructuras[nowPlayingStructure]][beats % EstructuraRitmica[estructuras[nowPlayingStructure]].Count] == 1)
                 {
                     ritmoSonido.Play();
                 }
@@ -831,11 +831,13 @@ public class BPMSounds : MonoBehaviour
                 beats += 1;
             }
             //Musica Acordes
-            if (timeStamp2 <= (soundPerSecondPiano*EstructuraLengthAcordes[estructuras[nowPlayingStructure]][nowPlayingChord])) {
+            if (timeStamp2 <= (soundPerSecondPiano*EstructuraLengthAcordes[estructuras[nowPlayingStructure]][nowPlayingChord % EstructuraLengthAcordes[estructuras[nowPlayingStructure]].Count])) {
                 if(nowPlayingChord == EstructuraLengthAcordes[estructuras[nowPlayingStructure]].Count-1)
                 {
                     nowPlayingChord = 0;
                     nowPlayingStructure += 1;
+                    nowPlayingMelody = 0;
+                    beats = 0;
                     if (nowPlayingStructure == estructuras.Count)
                     {
                         nowPlayingStructure = 0;
@@ -849,7 +851,7 @@ public class BPMSounds : MonoBehaviour
                     SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][(nowPlayingChord*3) + 1] % SonidosNotas.Count].Play();
                     SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][(nowPlayingChord * 3) + 2] % SonidosNotas.Count].Play();
                 }                
-            } else if(timeStamp2 > (soundPerSecondPiano * EstructuraLengthAcordes[estructuras[nowPlayingStructure]][nowPlayingChord]))
+            } else if(timeStamp2 > (soundPerSecondPiano * EstructuraLengthAcordes[estructuras[nowPlayingStructure]][nowPlayingChord % EstructuraLengthAcordes[estructuras[nowPlayingStructure]].Count]))
             {
                 SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord * 3] % SonidosNotas.Count].Stop();
                 SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][(nowPlayingChord * 3) + 1] % SonidosNotas.Count].Stop();
@@ -859,7 +861,7 @@ public class BPMSounds : MonoBehaviour
                 nowPlayingChord += 1;
             }
             //Musica Melodia
-            if (timeStamp3 <= (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody]))
+            if (timeStamp3 <= (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody % EstructuraLengthMelodia[estructuras[nowPlayingStructure]].Count]))
             {
                 if (nowPlayingMelody == EstructuraLengthMelodia[estructuras[nowPlayingStructure]].Count - 1)
                 {
@@ -872,7 +874,7 @@ public class BPMSounds : MonoBehaviour
                     SonidosNotas[EstructuraMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody] % SonidosNotas.Count].Play();
                 }
             }
-            else if (timeStamp3 > (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingChord]))
+            else if (timeStamp3 > (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingChord % EstructuraLengthMelodia[estructuras[nowPlayingStructure]].Count]))
             {
                 SonidosNotas[EstructuraMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody] % SonidosNotas.Count].Stop();
                 playingMelody = false;
@@ -882,7 +884,6 @@ public class BPMSounds : MonoBehaviour
         }
         else
         {
-            nowPlayingChordText.text = ("");
             beats = 0;
             nowPlayingChord = 0;
             nowPlayingStructure = 0;
