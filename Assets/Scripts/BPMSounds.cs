@@ -16,6 +16,7 @@ public class BPMSounds : MonoBehaviour
     public Text scaleText;
     public Text acordesText;
     public Text nowPlayingChordText;
+    public Text nowPlayingMelodyText;
     public Text nowPlayingFillerText;
     public Text nowPlayingMetricaText;
 
@@ -60,10 +61,12 @@ public class BPMSounds : MonoBehaviour
     private float soundPerSecondPiano;
     private float timeStamp;
     private float timeStamp2;
+    private float timeStamp3;
     private int beats;
 
     //Acordes
     private int nowPlayingChord;
+    private int nowPlayingMelody;
     private int estructuraActual;
     private int nowPlayingStructure;
 
@@ -72,13 +75,16 @@ public class BPMSounds : MonoBehaviour
 
     public bool playOn;
     private bool playingChords;
+    private bool playingMelody;
 
     List<String> notasHalfFull = new List<String>();
     List<AudioSource> SonidosNotas = new List<AudioSource>();
 
     List<String> notasAcordes = new List<String>();
     List<int> notasAcordesPlay = new List<int>();
+    List<int> notasMelodiaPlay = new List<int>();
     List<float> lengthChords = new List<float>();
+    List<float> lengthMelody = new List<float>();
 
     Dictionary<int, List<int>> EstructuraFiller = new Dictionary<int, List<int>>();
     Dictionary<int, List<int>> EstructuraMetrica = new Dictionary<int, List<int>>();
@@ -105,6 +111,7 @@ public class BPMSounds : MonoBehaviour
         seedbtn.onClick.AddListener(GenerateSeed);
         beats = 0;
         nowPlayingChord = 0;
+        nowPlayingMelody = 0;
         nowPlayingStructure = 0;
         bpm = 60;
         compassRythm = 4;
@@ -180,6 +187,7 @@ public class BPMSounds : MonoBehaviour
         beats = 0;
         estructuraActual = 0;
         playingChords = false;
+        playingMelody = false;
         GenerateStructure();
     }
 
@@ -266,7 +274,9 @@ public class BPMSounds : MonoBehaviour
     {
         //Limpieza de listas
         notasAcordesPlay = new List<int>();
-        List<string> escala = new List<string>();        
+        notasMelodiaPlay = new List<int>();
+        List<string> escala = new List<string>();
+        
         string noteInputTxt = notasHalfFull[UnityEngine.Random.Range(0, notasHalfFull.Count)];
         scaleText = scaleText.GetComponent<Text>();
         int index = 0;
@@ -324,6 +334,7 @@ public class BPMSounds : MonoBehaviour
         //Sub: 2,4
         //Dominante: 5,7
         string currentChord = "SubDominante";
+        int currentIndex = 0;
         for (int i = 0; i < EstructuraLengthAcordes[estructuraActual].Count; i++)
         {
             string nota = "";
@@ -515,14 +526,42 @@ public class BPMSounds : MonoBehaviour
             notasAcordesPlay.Add(notasHalfFull.IndexOf(nota));
             notasAcordesPlay.Add(notasHalfFull.IndexOf(nota2));
             notasAcordesPlay.Add(notasHalfFull.IndexOf(nota3));
+
+            float conteoMelodia = 0f;
+            Debug.Log("Conteo Acordes: " + EstructuraLengthAcordes[estructuraActual].Count);
+            Debug.Log("Conteo Melodia: " + EstructuraLengthMelodia[estructuraActual].Count);
+            Debug.Log("Current Index: " + currentIndex);            
+            for (int k=0; k < EstructuraLengthMelodia[estructuraActual].Count; k++)
+            {
+                if(EstructuraLengthAcordes[estructuraActual][i] <= conteoMelodia)
+                {
+                    Debug.Log("Current Displacement" + (currentIndex+k));
+                    currentIndex = k + 1;
+                    break;
+                }
+                int randomMelodia = UnityEngine.Random.Range(0, 3);
+                if (randomMelodia == 0)
+                {
+                    notasMelodiaPlay.Add(notasHalfFull.IndexOf(nota));
+                } else if (randomMelodia == 1)
+                {
+                    notasMelodiaPlay.Add(notasHalfFull.IndexOf(nota2));
+                } else if (randomMelodia == 2)
+                {
+                    notasMelodiaPlay.Add(notasHalfFull.IndexOf(nota3));
+                }
+                conteoMelodia += EstructuraLengthMelodia[estructuraActual][(k+currentIndex)%EstructuraLengthMelodia[estructuraActual].Count];
+            }
         }
         //Se agregan los acordes al diccionario
         EstructuraAcordes.Add(estructuraActual, notasAcordesPlay);
+        EstructuraMelodia.Add(estructuraActual, notasMelodiaPlay);
     }
 
     void calcularDuracionAcordes()
     {
         lengthChords = new List<float>();
+        lengthMelody = new List<float>();
         float compasesRestantes = 8f;
         //El siguiente acorde va a durar 4 compases
         //25% de probabilidad de que dure 4 compases
@@ -534,8 +573,29 @@ public class BPMSounds : MonoBehaviour
                 {
                     compasesRestantes -= 4.0f;
                     lengthChords.Add(4f);
+                    int randomMelodyLength = UnityEngine.Random.Range(0, 4);
+                    //Logica para division a Melodias inmediatamente
+                    if (randomMelodyLength == 0){
+                        lengthMelody.Add(2f);
+                        lengthMelody.Add(2f);
+                    } else if(randomMelodyLength == 1){
+                        lengthMelody.Add(1f);
+                        lengthMelody.Add(1f);
+                        lengthMelody.Add(1f);
+                        lengthMelody.Add(1f);
+                    } else if(randomMelodyLength == 2){
+                        lengthMelody.Add(4f);
+                    } else {
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                        lengthMelody.Add(0.5f);
+                    }
                 }
-
             }
             else
             {
@@ -546,6 +606,25 @@ public class BPMSounds : MonoBehaviour
                     {
                         compasesRestantes -= 2.0f;
                         lengthChords.Add(2f);
+
+                        int randomMelodyLength = UnityEngine.Random.Range(0, 3);
+                        //Logica para division a Melodias inmediatamente
+                        if (randomMelodyLength == 0)
+                        {
+                            lengthMelody.Add(2f);
+                        }
+                        else if (randomMelodyLength == 1)
+                        {
+                            lengthMelody.Add(1f);
+                            lengthMelody.Add(1f);
+                        }
+                        else
+                        {
+                            lengthMelody.Add(0.5f);
+                            lengthMelody.Add(0.5f);
+                            lengthMelody.Add(0.5f);
+                            lengthMelody.Add(0.5f);
+                        }
                     }
                 }
                 else
@@ -557,6 +636,7 @@ public class BPMSounds : MonoBehaviour
                         {
                             compasesRestantes -= 1.0f;
                             lengthChords.Add(1f);
+                            lengthMelody.Add(1f);
                         }
                     }
                     //La division minima dura medio compas
@@ -566,6 +646,7 @@ public class BPMSounds : MonoBehaviour
                         {
                             compasesRestantes -= 0.5f;
                             lengthChords.Add(0.5f);
+                            lengthMelody.Add(0.5f);
                         }
                     }
                 }
@@ -573,6 +654,7 @@ public class BPMSounds : MonoBehaviour
         }
         //Se agregan la longitud de los acordes a su estructura
         EstructuraLengthAcordes.Add(estructuraActual, lengthChords);
+        EstructuraLengthMelodia.Add(estructuraActual, lengthMelody);
     }
 
     String calcularCalidad(List<String> notasAcordes)
@@ -697,15 +779,6 @@ public class BPMSounds : MonoBehaviour
                 estructuras.Add(estructuraARepetir);
             }            
         }
-
-        for(int i = 0; i < EstructuraFiller.Count; i++)
-        {
-            Debug.Log("ESTRUCTURA: " + i);
-            for(int j=0; j < EstructuraFiller[i].Count; j++)
-            {
-                Debug.Log(EstructuraFiller[i][j]);
-            }
-        }
     }
 
     void PlayBeats()
@@ -723,6 +796,7 @@ public class BPMSounds : MonoBehaviour
             soundPerSecondPiano = (60.0f / bpm);
             timeStamp += Time.deltaTime;
             timeStamp2 += Time.deltaTime;
+            timeStamp3 += Time.deltaTime;
             //Musica Bateria
             if (timeStamp >= soundPerSecond)
             {
@@ -770,12 +844,11 @@ public class BPMSounds : MonoBehaviour
                 if (playingChords == false)
                 {
                     playingChords = true;
-                    nowPlayingChordText.text = (""+ notasHalfFull[EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord * 3]]);
-                    Debug.Log(EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord*3] % SonidosNotas.Count);
+                    nowPlayingChordText.text = (""+ notasHalfFull[EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord * 3] % notasHalfFull.Count]);
                     SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord*3] % SonidosNotas.Count].Play();
                     SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][(nowPlayingChord*3) + 1] % SonidosNotas.Count].Play();
                     SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][(nowPlayingChord * 3) + 2] % SonidosNotas.Count].Play();
-                }
+                }                
             } else if(timeStamp2 > (soundPerSecondPiano * EstructuraLengthAcordes[estructuras[nowPlayingStructure]][nowPlayingChord]))
             {
                 SonidosNotas[EstructuraAcordes[estructuras[nowPlayingStructure]][nowPlayingChord * 3] % SonidosNotas.Count].Stop();
@@ -785,7 +858,27 @@ public class BPMSounds : MonoBehaviour
                 timeStamp2 = 0f;
                 nowPlayingChord += 1;
             }
-            
+            //Musica Melodia
+            if (timeStamp3 <= (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody]))
+            {
+                if (nowPlayingMelody == EstructuraLengthMelodia[estructuras[nowPlayingStructure]].Count - 1)
+                {
+                    nowPlayingMelody = 0;
+                }
+                if (playingMelody == false)
+                {
+                    playingMelody = true;
+                    nowPlayingMelodyText.text = ("" + notasHalfFull[EstructuraMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody] % notasHalfFull.Count]);
+                    SonidosNotas[EstructuraMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody] % SonidosNotas.Count].Play();
+                }
+            }
+            else if (timeStamp3 > (soundPerSecondPiano * EstructuraLengthMelodia[estructuras[nowPlayingStructure]][nowPlayingChord]))
+            {
+                SonidosNotas[EstructuraMelodia[estructuras[nowPlayingStructure]][nowPlayingMelody] % SonidosNotas.Count].Stop();
+                playingMelody = false;
+                timeStamp3 = 0f;
+                nowPlayingMelody += 1;
+            }
         }
         else
         {
@@ -793,6 +886,7 @@ public class BPMSounds : MonoBehaviour
             beats = 0;
             nowPlayingChord = 0;
             nowPlayingStructure = 0;
+            nowPlayingMelody = 0;
         }
         //Revision On
         //Si hago click en play
@@ -808,6 +902,7 @@ public class BPMSounds : MonoBehaviour
             //stopButton.SetActive(false);
             playOn = false;
             playingChords = false;
+            playingMelody = false;
         }
     }
 
