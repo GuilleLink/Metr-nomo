@@ -528,14 +528,11 @@ public class BPMSounds : MonoBehaviour
             notasAcordesPlay.Add(notasHalfFull.IndexOf(nota3));
 
             float conteoMelodia = 0f;
-            Debug.Log("Conteo Acordes: " + EstructuraLengthAcordes[estructuraActual].Count);
-            Debug.Log("Conteo Melodia: " + EstructuraLengthMelodia[estructuraActual].Count);
-            Debug.Log("Current Index: " + currentIndex);            
+        
             for (int k=0; k < EstructuraLengthMelodia[estructuraActual].Count; k++)
             {
                 if(EstructuraLengthAcordes[estructuraActual][i] <= conteoMelodia)
                 {
-                    Debug.Log("Current Displacement" + (currentIndex+k));
                     currentIndex = k + 1;
                     break;
                 }
